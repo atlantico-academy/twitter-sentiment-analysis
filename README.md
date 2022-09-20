@@ -1,116 +1,81 @@
-# <Título do projeto>
+# Projeto Análise de Sentimentos
 
-Insira aqui um resumo do projeto que será construído. Tente apresentar uma justificativa para o projeto. É desejável que também se insira um [graphical abstract](https://www.elsevier.com/authors/tools-and-resources/visual-abstract).
+## Sugestão de nome da aplicação:
 
-## Desenvolvedores
- - [Nome do desenvolvedor #1](url-do-github-do-desenvolvedor-#1)
- - [Nome do desenvolvedor #2](url-do-github-do-desenvolvedor-#2)
- - [Nome do desenvolvedor #3](url-do-github-do-desenvolvedor-#3)
- - [Nome do desenvolvedor #4](url-do-github-do-desenvolvedor-#4)
- - ...
+**"PyGht Sentiment Time"**
 
----
+## Resumo
 
-> **Nota**: todo o texto abaixo é somente para entendimento do usuário do template. Por favor remova-o quando for atualizar este `README.md`.
+O projeto tem fundamento na **metodologia CRISP-DM** para desenvolvimento das etapas de transformação de dados e produção de conhecimento de forma gerenciável.
+Com esse fundamento, terá como propósito as seguintes etapas:\
+	1. **Proposta**\
+	Superada a fase clássica de entendimento do negócio pertinente à metologia empregada, uma vez que a base de dados foi fornecida e com tratamento de dados de sentimento dos tweets coletados de API do Twitter.\
+	Assim, após reuniões com o squad, delimitou-se a o projeto em uma aplicação de avaliação de análise de sentimento com base no tema e palavra alvo fornecidos pelo usuário, correlacionando-os com a polaridade (positividade, neutralidade e/ou negatividade) em face do período de tempo (horário do dia e dia da semana), apresentando análises gráficas para tanto. \
+	2. **Entendimento**\
+	Serão consideras a proposta e a problematização do projeto para averiguação da possibilidade de adequação ao conjunto de dados e a respectiva viabilidade de execução da proposta: coleta inicial, descrição, análise exploratória e verificação de qualidade e integridade do conjunto de dados.
+	Em caso de necessidade, em face da contextualização e viabilidade do projeto, será submetido a reavaliação e adequação da proposta do projeto.\
+	3. **Preparação**\
+	Superada a etapa antecedente e produzidos os insights necessários, nessa etapa o squad distribuirá a execução das tarefas para: seleção, limpeza, construção, integração e formatação do conjunto de dados.\
+	4. **Modelagem**\
+	Recebido o conjunto de dados, será avaliada a necessidade de ajuste, prosseguindo ou retornando a etapa anterior, caso necessário.
+	Devidamente adequado, nessa etapa o squad distribuirá a execução das tarefas para: seleção da técnica, testes, construção e avaliação do modelo.\
+	5. **Avaliação**\
+	Aqui, superadas as etapas anteriores,  o squad distribuirá a execução das tarefas para: avaliação dos resultados, revisão do processo e definição sobre a implementação ou adequação do projeto.
+	Entendidas necessárias alterações ao projeto e/ou ao processo, após a revisão, proceder-se-ão às devidas adequações. \
+	6. **Implantação**\
+	Por fim, na etapa final, o squad distribuirá a execução das tarefas para: planejamento da implantação, monitoração e manutenção da aplicação, relatório final e revisão do projeto.
 
-## Funcionalidades
+**Fluxo de execução do projeto**:
+```mermaid
+graph TD
+    A[Análise Sentimento Twitter] -->|Obtenção base de dados| B((Proposta / Entrega 24.09))
+    B -->|Contextualização e Viabilidade| C{Entendimento / Entrega 24.09 }
+    C --> |Reavaliação e Adequação| B
+	C -->|Insights| D((Preparação / Entrega 22.10))
+    D --> E{Modelagem / Entrega 22.10}
+    E -->|Ajuste| D
+	E --> F{Avaliação / Entrega 19.11}
+	F --> |Adaptação| B
+	F --> G((Implantação / Entrega 19.11))
+````
+## Entregas
+1. Etapas 1 e 2: **24.09.2022**
+2. Etapas 3 e 4: **22.10.2022**
+3. Etapas 5 e 6: **19.11.2022**
 
-Esse template foi inicialmente baseado no [template de ciência de dados do cookiecutter](https://drivendata.github.io/cookiecutter-data-science/), mas ao longo do tempo várias modificações foram sendo realizadas. Atualmente o template tem as seguintes características:
- - Utilização do arquivo `pyproject.toml` como centralizador de dependências;
- - Configuração para criação de aplicação `streamlit`;
- - Configuração para hospedagem no [heroku](https://heroku.com);
- - Automatização de tarefas com o uso do [invoke](https://www.pyinvoke.org/);
- - Utilização de [jupyter notebooks](https://jupyter.org/) para arquivos de análise;
- - Documentação com o [mkdocs](https://www.mkdocs.org/) ([material design](https://squidfunk.github.io/mkdocs-material/) theme)
- - 
+## Justificativa
+Diante da dinamicidade introduzida no cotidiano das pessoas pelas mídias sociais, bem como pela evolução tecnológica que proporcionou a coleta, extração e compartilhamento dos dados, muitas informações relevante podem ser obtidas por meio de técnidas de análise de sentimentos.\
+A partir desse projeto, busca-se encontrar insights a apresentar resultados relevantes sobre a avaliação de sentimentos com base na classificação por polaridade em determinados períodos de tempo, do dia e da semana, produzindo informações e promovendo insights importantes para diversas atividades.
 
-## Instruções
+**Fluxo da aplicação final**:
 
-### Requisitos
-
-Para utilizar este template, você precisará de um ambiente com os seguintes softwares:
- - git
- - Python 3.8
- - Poetry `1.1.13` ou superior
-
-É aconselhável o uso do `pyenv` para o gerenciamento de versões do Python.
-
-### Iniciando um novo projeto
-
-Para iniciar um novo projeto você precisa ter instalado na sua máquina as aplicações citadas na seção anterior, depois disso basta:
-
-1. clicar no botão **Use this template** (ou "Usar este modelo").
-2. Digitar um nome para seu repositório e uma descrição opcional.
-3. Escolher a visibilidade do projeto (Publica ou privada).
-4. Clicar em **Create repository from template** (Criar repositório a partir do modelo).
-
-Pronto, acaba de criar um repositório a partir deste modelo. Para mais informações sobre o uso de templates, acesse a [documentação oficial](https://docs.github.com/pt/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
-
-
-### Contribuindo com um repositório já criado
-
-Depois de criar o repositório, para começar a modificá-lo e/ou contribuir com repositórios já criados,  você precisa cloná-lo. Para isso, siga os seguintes passos:
-
-1. Acima da lista de arquivos, clique no botão **Code** (em verde).
-2. Copie a URL para o repositório.
-    - Tente clonar utilizando uma chave **SSH**. Para isso, clique na aba **SSH** e em seguida clique no ícone de cópia.
-3. Abra o terminal.
-4. Altere o diretório de trabalho atual para o local que deseja ter o diretório clonado.
-5. Digite `git clone` e cole a URL que você copiou anteriormente:
-
-```
-git clone git@github.com:NOME-DE-USUARIO/REPOSITORIO.git
-```
-6. Pressione **Enter** para criar seu clone local.
-
-Proto, com isso você acaba de clonar um repositório. Para mais informações sobre a clonagem de arquivos, acesse a [documentação oficial](https://docs.github.com/pt/repositories/creating-and-managing-repositories/cloning-a-repository).
-
-Com o repositório clonado, você precisa navegar até a pasta local, usando o comando :
-
-```
-cd REPOSITORIO
-```
-
-Estando na pasta do repositório, basta instalar as dependências do projeto utilizando o comando:
-
-```
-poetry install
+```mermaid
+stateDiagram-v2
+    [*] --> Entrada
+	Entrada --> POSITIVA
+    POSITIVA --> Run_App
+	Run_App --> Gráfico_Sentimento
+	Run_App --> Gráfico_Período
+	Run_App --> Nuvem_Palavras 
+	Gráfico_Sentimento --> MSG_Sucesso
+	Gráfico_Período --> MSG_Sucesso
+	Nuvem_Palavras --> MSG_Sucesso
+	MSG_Sucesso --> MSG_Continua
+    Entrada --> NEGATIVA
+    NEGATIVA --> MSG_Erro
+	MSG_Erro --> MSG_Continua
+	MSG_Continua --> SIM
+	MSG_Continua --> NÃO
+	SIM --> Entrada
+	NÃO --> [*]
 ```
 
-Ele irá instalar todas as dependências contidas no arquivo `pyproject.toml`. Depois disso basta ativar o ambiente virtual criado pelo Poetry utilizando o comando:
-
-```
-poetry shell
-```
-
-Para mais informações sobre os comandos do Poetry, visite a [documentação oficial](https://python-poetry.org/docs/).
-
-Para contribuir com um projeto, tente utilizar uma metodologia adequada. Utilize [este artigo](https://omadson.github.io/site/blog/2022/software-development-workflow/) para obter mais informações.
-
-
-### Organização de diretórios
-
-
-```
-.
-├── data/              # Diretório contendo todos os arquivos de dados
-│   ├── external/      # Arquivos de dados de fontes externas
-│   ├── interim/       # Arquivos de dados intermediários
-│   ├── processed/     # Arquivos de dados processados
-│   └── raw/           # Arquivos de dados originais, imutáveis
-├── docs/              # Documentação gerada através da biblioteca mkdocs
-├── models/            # Modelos treinados e serializados, predições ou resumos de modelos
-├── notebooks/         # Diretório contendo todos os notebooks utilizados nos passos
-├── references/        # Dicionários de dados, manuais e todo o material exploratório
-├── src/               # Código fonte utilizado nesse projeto
-│   ├── data/          # Classes e funções utilizadas para download e processamento de dados
-│   ├── deployment/    # Classes e funções utilizadas para implantação do modelo
-│   └── model/         # Classes e funções utilizadas para modelagem
-├── app.py             # Arquivo com o código da aplicação do streamlit
-├── Procfile           # Arquivo de configuração do heroku
-├── pyproject.toml     # Arquivo de dependências para reprodução do projeto
-├── poetry.lock        # Arquivo com sub-dependências do projeto principal
-├── README.md          # Informações gerais do projeto
-└── tasks.py           # Arquivo com funções para criação de tarefas utilizadas pelo invoke
-
-```
+## Equipe
+1. _Amanda Moreira_ [https://github.com/amandamoreyra]
+2. _Rayanne Oliveira dos Santos_ [https://github.com/RayanneOlivera]
+3. _Kaio Emanule_ [https://github.com/keikorr]
+4. _Tarciano Filho_ [https://github.com/tarcianofilho]
+5. _Renato Rodrigues Vieira dos Santos_ [https://github.com/renato-rodrig]
+6. _Leonardo Monteiro_ [https://github.com/lemont037]
+7. _Ítalo Magalhães_ [https://github.com/italo-mgl]
+8. _José Aurelio Kovalczuk de Oliveira_ [https://github.com/joseaureliok]
