@@ -1,4 +1,4 @@
-variavel,significado,tipo
+variavel,significado,tipo,""
 id,"ID único por usuário",nominal,""
 tweet_text,"Texto publicado",nominal,""
 tweet_date,"Data de publicação",nominal,""
