@@ -1,6 +1,6 @@
-variavel,significado,tipo,""
-id,"ID único por usuário",nominal,""
-tweet_text,"Texto publicado",nominal,""
-tweet_date,"Data de publicação",nominal,""
+variavel,significado,tipo,valores
+id,"ID único por usuário",useless,""
+tweet_text,"Texto publicado",text,""
+tweet_date,"Data de publicação",time,""
 sentiment,"Algorítmo de classificação do sentimento do usuário baseado no texto publicado",nominal,"[0,1,2]"
 query_used,"Palavra relevante",nominal,"[':)', ':(', 'veja', 'jornaloglobo', 'g1', 'folha', 'estadao','exame', '#trabalho', '#oportunidade', '#curiosidade', '#noticia','#novidade', '#fato']"
