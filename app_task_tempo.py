@@ -7,6 +7,7 @@ import streamlit as st
 import nltk
 import numpy as np
 import plotly.graph_objects as go
+import plotly.express as px
 
 from streamlit_tags import st_tags
 from snscrape.modules.twitter import TwitterSearchScraper as tss
@@ -21,7 +22,7 @@ model = joblib.load("models/model.joblib")
 stemmer = nltk.stem.RSLPStemmer()
 
 # funções
-def get_tweets(tag, limit=10):
+def get_tweets(tag, limit=100):
     search = tss(query=f"{tag} lang:pt")
     results = []
     for i, result in enumerate(search.get_items(), start=1):
@@ -39,6 +40,23 @@ def gera_grafico(titulo, valor, coluna):
     ))
     coluna.plotly_chart(fig)
 
+
+def temp_plot(dataframe, hora, sentimento):
+    dataframe = pd.DataFrame()
+    dataframe['hora'] = hora
+    dataframe['sentimento'] = sentimento
+    #chart_data = pd.DataFrame(px.data.gapminder())
+    clist = dataframe["sentimento"].unique().tolist()
+    #escolha = st.selectbox("Select", clist)
+    #escolha = st.multiselect("Select", clist)
+    #st.header("You selected: {}".format(", ".join(escolha)))
+    #dfs = {feeling: dataframe[dataframe["sentimento"] == feeling] for feeling in escolha}
+    dfs = {feeling: dataframe[dataframe["sentimento"] == feeling] for feeling in clist}
+    fig = go.Figure()
+    for feeling, dataframe in dfs.items():
+        fig = fig.add_trace(go.Scatter(x=dataframe["hora"], y=dataframe["sentimento"], name=feeling))
+    st.plotly_chart(fig)
+    
 def main():
 
     st.title('Nome da aplicação')
@@ -58,7 +76,7 @@ def main():
     results = {}
     if pesquisar:
         with st.spinner("Buscando tweets. Isso pode demorar..."):
-            limite = 100
+            limite = 1000
             for tag in tags:
                 st.markdown(f"### Resultados para a tag **{tag}**")
                 tweets = get_tweets(tag, limite)
@@ -121,22 +139,42 @@ def main():
                             st.info("Não foram encontrados tweets de pessoas verificadas.")
 
                     # aba tweets horarios
-                    df['tweet_date'] = pd.to_datetime(df['tweet_date'])
-                    df['tweet_date'] = df.tweet_date.dt.tz_convert('Brazil/East')
-                    df['tweet_hour'] = df['tweet_date'].dt.hour
-                    df['tweet_day'] = df['tweet_date'].dt.date
-                    
                     with st.expander(f"Horários dos tweets encontrados"):
-                        #st.line_chart(x = df['tweet_day'], y = media_probs[0])
-                        x = df['tweet_day']
-                        y = df['tweet_hour']
-                        p = figure(
-                            title='simple line example',
-                            x_axis_label='x',
-                            y_axis_label='y')
-                        p.line(x, y, legend_label='Trend', line_width=2)
-                        st.bokeh_chart(p, use_container_width=True)
-                            
+                        df['tweet_date'] = pd.to_datetime(df['tweet_date'])
+                        df['tweet_date'] = df.tweet_date.dt.tz_convert('Brazil/East')
+                        df['tweet_hour'] = df['tweet_date'].dt.hour
+                        df['tweet_day'] = df['tweet_date'].dt.date
+
+                        lista_date = df['tweet_date'].to_list()
+                        lista_hour = df['tweet_hour'].to_list()
+                        lista_y = []
+                        for n in y_hat:
+                            if n == 1:
+                                n = "positivo"
+                            elif n == 0:
+                                n = "negativo"
+                            else:
+                                n = "neutro"
+
+                            lista_y.append(n)
+
+                        chart_data = pd.DataFrame()
+                        #chart_data['hora'] = lista_hour
+                        #chart_data['sentimento'] = lista_y
+
+                        temp_plot(chart_data, lista_hour, lista_y)
+
+
+                        #st.markdown(lista_hour)
+                        #st.markdown(lista_y)
+                        #st.markdown(chart_data)
+
+                        #st.line_chart( data = chart_data, y = "sentimento", x = "hora")
+                    '''
+                    with st.expander(f"Horários dos tweets encontrados"):
+                        #st.line_chart( chart_data['hora'])
+                        st.line_chart( data = chart_data, y = "sentimento", x = "hora",  width=2, height=2, use_container_width=True)
+                      '''      
                 else:
                     st.error(f"Não foram encontrados tweets suficientes para a tag **{tag}**")
         
