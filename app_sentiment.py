@@ -22,7 +22,7 @@ model = joblib.load("models/model.joblib")
 nltk.download('stopwords')
 stopnltk = nltk.corpus.stopwords.words('portuguese')
 stopwords = set(stopnltk)
-stopwords.update(["a","b","c","d","fato","ela","estou","nem","tudo","p","pq","quando","dele","RT","por","de",'dar','pois','em','um','da','ser','aqui','vou','dos','ter','não','ao','sou','seu','à','n','se','esse','uma','mais','ele','fazendo','você','pode','essa','é','mas','segue','pra','isso','vez','para','muito','pelo','pela','são','tô','tava','próxima','kkk','tão','cmg','na','vamos','https','t','co','c','New','eu','seis','retweets','ano','pessoa','likes','vai','que','ou','anos','7dias','tirou','tem','q','0','O','e','os','assim','só','mesmo','tá','pro','votar','pessoas','vc'])
+stopwords.update(json.load(open('stopwords.json', 'r')))
 stemmer = nltk.stem.RSLPStemmer()
 
 #função para importar os tweets
@@ -43,19 +43,24 @@ def gera_grafico(titulo, valor, coluna, cor):
         gauge = {'axis': {'range': [0, 100]},
                 'bar': {'color': cor}}
     ))
-    coluna.plotly_chart(fig)
+    if coluna:
+        coluna.plotly_chart(fig)
+    else:
+        st.plotly_chart(fig)        
 #função para gerar as nuvens de palavras
-def nuvem_palavras(cor,texto,sentimento):
-    
+def nuvem_palavras(cor, texto, sentimento, coluna, query, stopwords):
+    stopwords.update([query, query.lower(), query.upper(), query.capitalize()])
+    place = coluna if coluna else st
+    texto = texto.lower()
     if sentimento == 0:
-        st.markdown("PALAVRAS PRESENTES EM TWEETS NEGATIVOS")
+        place.markdown("PALAVRAS PRESENTES EM TWEETS NEGATIVOS")
         # importando imagem
         imagem = cv2.imread("deslike.jpg")
         gray = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
         ret, mask = cv2.threshold(gray,250, 255, cv2.THRESH_BINARY)
               
-        wordcloud = WordCloud(stopwords=stopwords,
-                          background_color=cor,contour_color = "black",
+        wordcloud = WordCloud(stopwords=stopwords, 
+                          background_color= cor,contour_color = "black",
                           contour_width = 0.5,
                           width=500, height=500, max_words=2000,
                           max_font_size=200, mask=mask,
@@ -64,9 +69,9 @@ def nuvem_palavras(cor,texto,sentimento):
         fig, ax = plt.subplots(figsize=(10,10))
         ax.imshow(wordcloud, interpolation='bilinear')
         ax.set_axis_off()
-        st.pyplot(fig=fig)
+        place.pyplot(fig=fig)
     elif sentimento == 1:
-        st.markdown("PALAVRAS PRESENTES EM TWEETS POSITIVOS")        
+        place.markdown("PALAVRAS PRESENTES EM TWEETS POSITIVOS")        
         # importando imagem
         imagem = cv2.imread("like.jpg")
         gray = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
@@ -81,9 +86,9 @@ def nuvem_palavras(cor,texto,sentimento):
         fig, ax = plt.subplots(figsize=(10,10))
         ax.imshow(wordcloud, interpolation='bilinear')
         ax.set_axis_off()
-        st.pyplot(fig=fig)
+        place.pyplot(fig=fig)
     else:
-        st.markdown("PALAVRAS PRESENTES EM TWEETS NEUTROS")
+        place.markdown("PALAVRAS PRESENTES EM TWEETS NEUTROS")
         #mask1 = np.array(Image.open("neutro.jpg"))
         wordcloud = WordCloud(stopwords=stopwords,
                           background_color=cor,
@@ -94,7 +99,7 @@ def nuvem_palavras(cor,texto,sentimento):
         fig, ax = plt.subplots(figsize=(6,8))
         ax.imshow(wordcloud, interpolation='bilinear')
         ax.set_axis_off()
-        st.pyplot(fig=fig)
+        place.pyplot(fig=fig)
 def main():
 
     st.title('Nome da aplicação')
@@ -108,8 +113,9 @@ def main():
     # col1, col2 = st.columns(2)
     # start_date = col1.date_input("Data inicial")
     # end_date = col2.date_input("Data final")
-    pesquisar = st.button("Pesquisar")
+    
     verificado = st.checkbox("Usuários verificados", help = "Retornar tweets apenas de usuários verificados?")
+    pesquisar = st.button("Pesquisar")
     all_tweets = {}
     results = {}
     all_df = {}
@@ -143,44 +149,49 @@ def main():
                     all_df[tag] = df
                     probs = model.predict_proba(X)
                     media_probs = probs.mean(axis=0)
+                    result = media_probs/(media_probs[0]+media_probs[1])                    
                     col1, col2, col3 = st.columns(3)
                     # gráfico negativo
-                    gera_grafico("Negativo", media_probs[0]*100, col1, "red")
-                    gera_grafico("Neutro", media_probs[2]*100, col2, "white")
-                    gera_grafico("Positivo", media_probs[1]*100, col3, "green")
+                    gera_grafico("Sentimento", result[1]*100, None, "green")
+                    #gera_grafico("Neutro", media_probs[2]*100, col2, "white")
+                    #gera_grafico("Positivo", media_probs[1]*100, col3, "green")
                     if media_probs.argmax() == 0:
                         st.error("A tag pesquisada possui mais tweets negativos")
                     elif media_probs.argmax() == 1:
                         st.success("A tag pesquisada possui mais tweets positivos")
                     else:
                         st.info("A tag pesquisada possui mais tweets neutros")
-                    with st.expander(f"Tweets sobre o assunto:"):                        
-                        if df.verified.sum() > 0:
-                            for tweet in tweets:
-                                if verificado:
-                                    if tweet['user']['verified'] == True:                                        
-                                        r = requests.get(f"https://publish.twitter.com/oembed?url={tweet['url']}")
-                                        col1, col2 = st.columns([.1, .9])
-                                        col1.image(tweet['user']['profileImageUrl'])
-                                        col2.markdown(r.json()['html'], unsafe_allow_html=True)
-                                        st.markdown('---')
-                                else:
-                                    if tweet['user']['verified'] == False:                                        
-                                        r = requests.get(f"https://publish.twitter.com/oembed?url={tweet['url']}")
-                                        col1, col2 = st.columns([.1, .9])
-                                        col1.image(tweet['user']['profileImageUrl'])
-                                        col2.markdown(r.json()['html'], unsafe_allow_html=True)
-                                        st.markdown('---')                                
-                        else:
-                            st.info("Não foram encontrados tweets de pessoas verificadas.")
-
                 with st.expander('Nuvens de palavras'):
+                    
                     for tag, df in all_df.items():
+                        col1, col2 = st.columns(2)
                         st.markdown(f"### {tag}")
-                        for sentimento in [0,1,2]:
+                        for sentimento, coluna in zip([0,1],st.columns(2)):
+                            
                             tt = df.query("classe == @sentimento").original_text.to_list()                                                   
                             texto = ' '.join(tt)                            
-                            nuvem_palavras("white",texto,sentimento)
+                            nuvem_palavras("white", texto, sentimento, coluna, tag, stopwords)
+                with st.expander(f"Tweets sobre o assunto:"):                        
+                    if df.verified.sum() > 0:
+                        for tweet in tweets:
+                            if verificado:
+                                if tweet['user']['verified'] == True:                                        
+                                    r = requests.get(f"https://publish.twitter.com/oembed?url={tweet['url']}")
+                                    col1, col2 = st.columns([.1, .9])
+                                    col1.image(tweet['user']['profileImageUrl'])
+                                    col2.markdown(r.json()['html'], unsafe_allow_html=True)
+                                    st.markdown('---')
+                            else:
+                                if tweet['user']['verified'] == False:                                        
+                                    r = requests.get(f"https://publish.twitter.com/oembed?url={tweet['url']}")
+                                    col1, col2 = st.columns([.1, .9])
+                                    col1.image(tweet['user']['profileImageUrl'])
+                                    col2.markdown(r.json()['html'], unsafe_allow_html=True)
+                                    st.markdown('---')                                
+                    else:
+                        st.info("Não foram encontrados tweets de pessoas verificadas.")
+
+
                      
                        
 
