@@ -5,33 +5,26 @@ O Twitter desde de sua criação tem se destacado como uma notória rede social,
 ## Fluxo da Aplicação
 ```mermaid
 stateDiagram-v2
-    [*] --> Entrada
+    	[*] --> Escolha_Usuário
+	Escolha_Usuário --> Entrada
 	Entrada --> Válida
-    Válida --> Processamento
+    	Válida --> Processamento
 	Processamento --> Gráfico_Sentimento
-	Processamento --> Gráfico_Período
 	Processamento --> Nuvem_Palavras 
 	Gráfico_Sentimento --> Mensagem_Sucesso
-	Gráfico_Período --> Mensagem_Sucesso
 	Nuvem_Palavras --> Mensagem_Sucesso
-	Mensagem_Sucesso --> Mensagem_Continua
-    Entrada --> Inválida
-    Inválida --> Mensagem_Erro
-	Mensagem_Erro --> Mensagem_Continua
-	Mensagem_Continua --> SIM
-	Mensagem_Continua --> NÃO
-	SIM --> Entrada
-	NÃO --> [*]
+	Mensagem_Sucesso --> Saída
+    	Entrada --> Inválida
+    	Inválida --> Mensagem_Erro
+	Mensagem_Erro --> Saída
+	Saída --> [*]
 ```
 ## Desenvolvedores
  - [Tarciano Filho](https://github.com/tarcianofilho)
- - [Renato Rodrigues](https://github.com/renato-rodrig)
  - [Rayanne Oliveira](https://github.com/RayanneOlivera)
  - [José Aurelio](https://github.com/joseaureliok)
  - [Kaio Emanuel](https://github.com/keikorr)
- - [Ítalo Magalhães](https://github.com/italo-mgl)
  - [Amanda Moreira](https://github.com/amandamoreyra)
- - [Leonardo Monteiro](https://github.com/lemont037)
 
 ---
 
