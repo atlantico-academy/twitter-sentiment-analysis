@@ -5,8 +5,8 @@ O Twitter desde de sua criação tem se destacado como uma notória rede social,
 ## Fluxo da Aplicação
 ```mermaid
 stateDiagram-v2
-    	[*] --> Escolha do usuário
-	Escolha do usuário --> Entrada
+    	[*] --> Escolha
+	Escolha --> Entrada
 	Entrada --> Válida
     	Válida --> Processamento
 	Processamento --> Gráfico_Sentimento
