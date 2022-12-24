@@ -13,7 +13,7 @@ stateDiagram-v2
 	Processamento --> Nuvem_Palavras 
 	Gráfico_Sentimento --> Mensagem_Sucesso
 	Nuvem_Palavras --> Mensagem_Sucesso
-	Mensagem_Sucesso --> Saída --> [*]
+	Mensagem_Sucesso --> Saída
     	Entrada --> Inválida
     	Inválida --> Mensagem_Erro
 	Mensagem_Erro --> Saída
