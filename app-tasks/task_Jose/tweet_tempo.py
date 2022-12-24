@@ -82,27 +82,14 @@ def main():
                     probs = model.predict_proba(X)
                     media_probs = probs.mean(axis=0)
                     col1, col2, col3 = st.columns(3)
-                    # gráfico negativo
-                    gera_grafico("Negativo", media_probs[0]*100, col1)
-                    gera_grafico("Neutro", media_probs[2]*100, col2)
-                    gera_grafico("Positivo", media_probs[1]*100, col3)
-                    if media_probs.argmax() == 0:
-                        st.error("Mensagem negativa")
-                    elif media_probs.argmax() == 1:
-                        st.success("mensagem positiva")
-                    else:
-                        st.info("Mensagem neura.")
-                    with st.expander(f"Tweets mais relevantes"):
-                        if df.verified.sum() > 0:
-                            for tweet in tweets:
-                                if tweet['user']['verified']:
-                                    r = requests.get(f"https://publish.twitter.com/oembed?url={tweet['url']}")
-                                    col1, col2 = st.columns([.1, .9])
-                                    col1.image(tweet['user']['profileImageUrl'])
-                                    col2.markdown(r.json()['html'], unsafe_allow_html=True)
-                                    st.markdown('---')
+                    
+                    with st.expander(f"Tempo"):
+                        df['date'] = 
+                        
                         else:
                             st.info("Não foram encontrados tweets de pessoas verificadas.")
+                                        
+                    
                 else:
                     st.error(f"Não foram encontrados tweets suficientes para a tag **{tag}**")
         

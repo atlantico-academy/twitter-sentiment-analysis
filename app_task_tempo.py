@@ -39,23 +39,6 @@ def gera_grafico(titulo, valor, coluna):
         gauge = {'axis': {'range': [0, 100]}}
     ))
     coluna.plotly_chart(fig)
-
-
-def temp_plot(dataframe, hora, sentimento):
-    dataframe = pd.DataFrame()
-    dataframe['hora'] = hora
-    dataframe['sentimento'] = sentimento
-    #chart_data = pd.DataFrame(px.data.gapminder())
-    clist = dataframe["sentimento"].unique().tolist()
-    #escolha = st.selectbox("Select", clist)
-    #escolha = st.multiselect("Select", clist)
-    #st.header("You selected: {}".format(", ".join(escolha)))
-    #dfs = {feeling: dataframe[dataframe["sentimento"] == feeling] for feeling in escolha}
-    dfs = {feeling: dataframe[dataframe["sentimento"] == feeling] for feeling in clist}
-    fig = go.Figure()
-    for feeling, dataframe in dfs.items():
-        fig = fig.add_trace(go.Scatter(x=dataframe["hora"], y=dataframe["sentimento"], name=feeling))
-    st.plotly_chart(fig)
     
 def main():
 
@@ -76,7 +59,7 @@ def main():
     results = {}
     if pesquisar:
         with st.spinner("Buscando tweets. Isso pode demorar..."):
-            limite = 1000
+            limite = 100
             for tag in tags:
                 st.markdown(f"### Resultados para a tag **{tag}**")
                 tweets = get_tweets(tag, limite)
@@ -111,70 +94,46 @@ def main():
                     media_probs = probs.mean(axis=0)
                     col1, col2, col3 = st.columns(3)
                     
-                    # gráfico negativo
-                    gera_grafico("Negativo", media_probs[0]*100, col1)
-                    # gráfico neutro
-                    gera_grafico("Neutro", media_probs[2]*100, col2)
-                    # gráfico positivo
-                    gera_grafico("Positivo", media_probs[1]*100, col3)
                     
-                    if media_probs.argmax() == 0:
-                        st.error("Mensagem negativa")
-                    elif media_probs.argmax() == 1:
-                        st.success("Mensagem positiva")
-                    else:
-                        st.info("Mensagem neutra.")
-                    
-                    # aba tweets mais relevantes
-                    with st.expander(f"Tweets mais relevantes"):
-                        if df.verified.sum() > 0:
-                            for tweet in tweets:
-                                if tweet['user']['verified']:
-                                    r = requests.get(f"https://publish.twitter.com/oembed?url={tweet['url']}")
-                                    col1, col2 = st.columns([.1, .9])
-                                    col1.image(tweet['user']['profileImageUrl'])
-                                    col2.markdown(r.json()['html'], unsafe_allow_html=True)
-                                    st.markdown('---')
-                        else:
-                            st.info("Não foram encontrados tweets de pessoas verificadas.")
-
                     # aba tweets horarios
                     with st.expander(f"Horários dos tweets encontrados"):
                         df['tweet_date'] = pd.to_datetime(df['tweet_date'])
                         df['tweet_date'] = df.tweet_date.dt.tz_convert('Brazil/East')
                         df['tweet_hour'] = df['tweet_date'].dt.hour
-                        df['tweet_day'] = df['tweet_date'].dt.date
+                        df['tweet_min'] = df['tweet_date'].dt.minute
+                        df['tweet_sec'] = df['tweet_date'].dt.second
+                        
+                        df['sentimento'] = model.predict(X)
 
-                        lista_date = df['tweet_date'].to_list()
-                        lista_hour = df['tweet_hour'].to_list()
-                        lista_y = []
-                        for n in y_hat:
-                            if n == 1:
-                                n = "positivo"
-                            elif n == 0:
-                                n = "negativo"
+                        lista_positivo:[]
+                        lista_negativo:[]
+                        lista_neutro:[]
+                        
+                        dict_tempo = {"positivo": lista_positivo, "negativo": lista_negativo, "neutro": lista_neutro}
+                        
+                        for i in df['tweet_sec']:
+                            p = 0
+                            n = 0
+                            o = 0
+                            for j in df['sentimento']:
+                                if j == 1:
+                                    p+=1
+                                elif j == 0:
+                                    n+=1
+                                else:
+                                    o+=0
+                                    
+                            if p>n and p>o:
+                                lista_positivo.append(i)
+                            if n>p and n>o:
+                                lista_negativo.append(i)
                             else:
-                                n = "neutro"
+                                lista_neutro.append(i)
 
-                            lista_y.append(n)
+                        chart_data = pd.DataFrame.from_dict(dict_tempo, orient = "index")
 
-                        chart_data = pd.DataFrame()
-                        #chart_data['hora'] = lista_hour
-                        #chart_data['sentimento'] = lista_y
-
-                        temp_plot(chart_data, lista_hour, lista_y)
-
-
-                        #st.markdown(lista_hour)
-                        #st.markdown(lista_y)
-                        #st.markdown(chart_data)
-
-                        #st.line_chart( data = chart_data, y = "sentimento", x = "hora")
-                    '''
-                    with st.expander(f"Horários dos tweets encontrados"):
-                        #st.line_chart( chart_data['hora'])
-                        st.line_chart( data = chart_data, y = "sentimento", x = "hora",  width=2, height=2, use_container_width=True)
-                      '''      
+                        st.line_chart( data = chart_data)
+                    
                 else:
                     st.error(f"Não foram encontrados tweets suficientes para a tag **{tag}**")
         
